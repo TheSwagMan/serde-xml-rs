@@ -61,6 +61,46 @@ where
     }
 }
 
+/// An implementation of `SerializeSeq` for serializing to XML.
+pub struct Seq<'w, W>
+where
+    W: 'w + Write,
+{
+    parent: &'w mut Serializer<W>,
+}
+
+impl<'w, W> Seq<'w, W>
+where
+    W: 'w + Write,
+{
+    pub fn new(parent: &'w mut Serializer<W>) -> Seq<'w, W> {
+        Seq { parent }
+    }
+}
+
+impl<'w, W> ser::SerializeSeq for Seq<'w, W>
+where
+    W: 'w + Write,
+{
+    type Ok = ();
+    type Error = Error;
+    fn end(self) -> Result<Self::Ok> {
+        Ok(())
+    }
+    fn serialize_element<T: ?Sized + Serialize>(&mut self, value: &T) -> Result<()> {
+        /*write!(self.parent.writer, "<")?;
+        key.serialize(&mut *self.parent)?;
+        write!(self.parent.writer, ">")?;*/
+
+        value.serialize(&mut *self.parent)?;
+
+        /*write!(self.parent.writer, "</")?;
+        key.serialize(&mut *self.parent)?;
+        write!(self.parent.writer, ">")?;*/
+        Ok(())
+    }
+}
+
 /// An implementation of `SerializeStruct` for serializing to XML.
 pub struct Struct<'w, W>
 where

@@ -3,7 +3,7 @@ use std::io::Write;
 
 use serde::ser::{self, Impossible, Serialize};
 
-use self::var::{Map, Struct};
+use self::var::{Map, Struct, Seq};
 use error::{Error, Result};
 
 mod var;
@@ -109,7 +109,7 @@ where
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq = Impossible<Self::Ok, Self::Error>;
+    type SerializeSeq = Seq<'w, W>;
     type SerializeTuple = Impossible<Self::Ok, Self::Error>;
     type SerializeTupleStruct = Impossible<Self::Ok, Self::Error>;
     type SerializeTupleVariant = Impossible<Self::Ok, Self::Error>;
@@ -236,9 +236,10 @@ where
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
         // TODO: Figure out how to constrain the things written to only be composites
-        Err(Error::UnsupportedOperation {
+        Ok(Seq::new(self))
+        /*Err(Error::UnsupportedOperation {
             operation: "serialize_seq".to_string(),
-        })
+        })*/
     }
 
     fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
