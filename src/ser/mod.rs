@@ -205,9 +205,13 @@ where
         variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok> {
-        Err(Error::UnsupportedOperation {
+        //write!(self.writer, name)?;
+        //write!(self.writer, "::")?;
+        write!(self.writer, "{}", variant)?;
+        Ok(())
+        /*Err(Error::UnsupportedOperation {
             operation: "serialize_unit_variant".to_string(),
-        })
+        })*/
     }
 
     fn serialize_newtype_struct<T: ?Sized + Serialize>(
